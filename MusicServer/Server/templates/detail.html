@@ -1,0 +1,26 @@
+{% extends 'base2.html' %} 
+{% block title %}详细信息{% endblock %} 
+{% block content %}
+<script>
+    $('#menu li.active').removeClass('active');
+</script>
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="page-header text-center">
+                <h1>{{ item }}</h1>
+            </div>
+                <form class="form-horizontal">
+                    {% for key, value in info_dict.items %}
+                    <div class="control-group">
+                        <label class="control-label" for="{{key}}">{{key}}: </label>
+                        <div class="controls">
+                            <p id="{{key}}" type="text">{{ value }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

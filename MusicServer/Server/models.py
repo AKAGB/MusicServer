@@ -4,16 +4,24 @@ from django.contrib.auth.models import User
 # Create your models here.
 class AppUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_name = models.CharField(max_length=20)
+    user_name = models.CharField(max_length=20, default='')
     reg_time = models.DateField()
     user_place = models.CharField(max_length=20)
 
+    @staticmethod
+    def getattr():
+        return ['id', 'user_name','reg_time','user_place' ]
+
     def __str__(self):
-        return self.user_name
+        return self.user.username
 
 class Singer(models.Model):
     singer_name = models.CharField(max_length=20)
     singer_en_name = models.CharField(max_length=20)
+
+    @staticmethod
+    def getattr():
+        return ['id', 'singer_name','singer_en_name' ]
 
     def __str__(self):
         return self.singer_name
@@ -22,6 +30,10 @@ class Company(models.Model):
     company_name = models.CharField(max_length=20)
     build_date = models.DateField()
     company_place = models.CharField(max_length=20)
+
+    @staticmethod
+    def getattr():
+        return ['id', 'company_name','build_date','company_place' ]
 
     def __str__(self):
         return self.company_name
@@ -33,7 +45,11 @@ class Album(models.Model):
     singer = models.ForeignKey(Singer, on_delete=models.CASCADE, default=1)
 
     # Relationship set
-    users = models.ManyToManyField(AppUser)
+    users = models.ManyToManyField(AppUser, blank=True)
+
+    @staticmethod
+    def getattr():
+        return ['id', 'album_name','album_year' ]
 
     def __str__(self):
         return self.album_name
@@ -47,6 +63,11 @@ class Song(models.Model):
     singer_id = models.ForeignKey(Singer, on_delete=models.CASCADE, default=1)
     album_id = models.ForeignKey(Album, on_delete=models.CASCADE, default=1)
 
+    @staticmethod
+    def getattr():
+        return ['id', 'music_name','music_time','music_year',
+        'music_style' ]
+
     def __str__(self):
         return self.music_name
 
@@ -58,7 +79,11 @@ class PlayList(models.Model):
 
     # Relationship set
     user = models.ManyToManyField(AppUser)
-    songs = models.ManyToManyField(Song)
+    songs = models.ManyToManyField(Song, blank=True)
 
     def __str__(self):
         return self.list_name
+
+    @ staticmethod
+    def getattr():
+        return ['id', 'list_name','build_date','list_label','list_intro' ]

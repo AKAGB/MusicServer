@@ -1,0 +1,29 @@
+{% extends 'base1.html' %}
+
+{% block title %}用户登陆{% endblock %}
+
+{% block content %}
+<form class="form-horizontal" action='/login/', method="POST">
+    {% csrf_token %}
+    {% if message %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endif %}
+    <div class="control-group">
+         <label class="control-label" for="inputEmail">用户名</label>
+        <div class="controls">
+            <input id="inputEmail" name='username' type="text" placeholder="Username" required/>
+        </div>
+    </div>
+    <div class="control-group">
+         <label class="control-label" for="inputPassword">密码</label>
+        <div class="controls">
+            <input id="inputPassword" name='password' type="password" placeholder="Password" required/>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn">登陆</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

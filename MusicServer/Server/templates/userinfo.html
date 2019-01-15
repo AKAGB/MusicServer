@@ -1,0 +1,38 @@
+{% extends 'base2.html' %} 
+{% block title %}个人信息{% endblock %} 
+{% block content %}
+<script>
+    $('#menu li.active').removeClass('active');
+</script>
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="page-header text-center">
+                <h1>
+                    个人信息
+                </h1>
+            </div>
+                    <form class="form-horizontal" style="width: 320px; margin: auto;">
+                        <div class="control-group">
+                            <label class="control-label" for="username">用户名</label>
+                            <div class="controls">
+                                <p id="username" type="text">{{ result.username }}</p>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="reg_time">注册时间</label>
+                            <div class="controls">
+                                <p id="reg_time" type="text">{{ result.reg_time }}</p>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="user_place">所在地区</label>
+                            <div class="controls">
+                                <p id="user_place" type="text">{{ result.user_place }}</p>
+                            </div>
+                        </div>
+                    </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
