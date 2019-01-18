@@ -1,0 +1,83 @@
+{% extends 'base2.html' %} 
+{% block title %}收藏列表{% endblock %} 
+{% block content %}
+<script>
+	$(function () {
+		$('#menu li.active').removeClass('active');
+    	$('#List').addClass('active');
+
+		var data = JSON.parse('{{ data }}'.replace(/&quot;/g, '"'));
+		// console.log(data);
+		var showd = {
+			'result': data['build_list'],
+			'attrs': data['attrs'],
+			'table': 'PlayList',
+		};
+		// console.log(showd);
+		showData(showd, 'build_table');
+		showd['result'] = data['collect_list'];
+		showData(showd, 'collect_table');
+	});
+</script>
+<div class="container">
+	<div class="row">
+		<div class="span12">
+			<div class="page-header text-center">
+				<a href="/index/{{ username }}/playlist/createlist/">
+					<button style="float: right;" class="btn btn-info">创建新列表</button>
+				</a>
+				<h1>
+					创建的列表
+				</h1>
+			</div>
+			<table id="build_table" class="table">
+				<thead>
+					<tr>
+						<th>
+							attr1
+						</th>
+						<th>
+							attr2
+						</th>
+						<th>
+							attr3
+						</th>
+						<th>
+							attr4
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div class="span12">
+			<div class="page-header text-center">
+				<h1>
+					收藏的列表
+				</h1>
+			</div>
+			<table id="collect_table" class="table">
+				<thead>
+					<tr>
+						<th>
+							编号
+						</th>
+						<th>
+							产品
+						</th>
+						<th>
+							交付时间
+						</th>
+						<th>
+							状态
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

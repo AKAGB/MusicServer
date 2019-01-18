@@ -1,0 +1,50 @@
+{% extends 'base2.html' %} 
+{% block title %}创建列表{% endblock %} 
+{% block content %}
+<script>
+    $(function () {
+        $('#menu li.active').removeClass('active');
+    });
+</script>
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="page-header text-center">
+                <h1>
+                    填写列表信息
+                </h1>
+            </div>
+            <form class="form-horizontal" style="width: 40%; margin: auto;" action="/index/{{ username }}/playlist/createlist/" method="post">
+                {% csrf_token %}
+                {% if message %}
+                    <div class="alert alert-error text-center">{{ message }}</div>
+                {% endif %}
+                <div class="control-group">
+                        <label class="control-label" for="list_name">歌单名称</label>
+                    <div class="controls">
+                        <input id="list_name" name="list_name" type="text" required/>
+                    </div>
+                </div>
+                <div class="control-group">
+                        <label class="control-label" for="list_label">标签</label>
+                    <div class="controls">
+                        <input id="list_label" name="list_label" type="text" required/>
+                    </div>
+                </div>
+                <div class="control-group">
+                        <label class="control-label" for="list_intro">描述</label>
+                    <div class="controls">
+                        <textarea rows="5" cols="30" style="resize: none;" id="list_intro" name="list_intro" required>
+                        </textarea>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn">创建</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

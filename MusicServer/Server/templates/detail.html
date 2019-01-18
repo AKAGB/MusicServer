@@ -11,11 +11,17 @@
                 <h1>{{ item }}</h1>
             </div>
                 <form class="form-horizontal">
-                    {% for key, value in info_dict.items %}
+                    {% for key, value in info_dict.items|dictsort:"0.lower" %}
                     <div class="control-group">
                         <label class="control-label" for="{{key}}">{{key}}: </label>
                         <div class="controls">
+                        {% ifequal key 'music_url' %}
+                            <audio src="{{ value }}" controls="controls">
+                                Your browser does not support the audio element.
+                            </audio>
+                        {% else %}
                             <p id="{{key}}" type="text">{{ value }}</p>
+                        {% endifequal %}
                         </div>
                     </div>
                     {% endfor %}

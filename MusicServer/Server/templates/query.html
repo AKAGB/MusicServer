@@ -3,43 +3,17 @@
 {% block content %}
 <script>
     $(function () {
-        var funcs = ['Song', 'Singer', 'Album', 'Company', 'PlayList', 'AppUser']
-            showData = function (res) {
-                // console.log(res);
-                var 
-                    table = $('table'),
-                    thead = '<thead><tr>';
-                    // href = '"{% url \'/index/{{username}}/detail/' + res['table'] + '/';
-                table.empty();
-                for (var i = 0; i < res['attrs'].length; i++) {
-                    thead += '<th>' + res['attrs'][i] + '</th>';
-                }
-                thead += '</tr></thead>';
-                table.append(thead);
+        var funcs = ['Song', 'Singer', 'Album', 'Company', 'PlayList', 'AppUser'];
 
-                table.append('<tbody></tbody>');
-                tbody = $('tbody');
-                // console.log(res['result']);
-                len = Math.min(10, res['result'].length);
-                for (var i = 0; i < len; i++) {
-                    // console.log(i)
-                    tr = '<tr class="info">';
-                    for (var j = 0; j < res['attrs'].length; j++) {
-                        tr += '<td><a href="/index/{{ username }}/detail/' + 
-                                res['table'] + '/' + res['result'][i]['id'] + '/">' + 
-                                res['result'][i][res['attrs'][j]] + '</a></td>';
-                    }
-                    tr += '</tr>';
-                    // console.log(tr);
-                    tbody.append(tr);
-                }
-            };
+
         $('.func li').click(function () {
             var func = funcs[$(this).index()-1];
             $(this).siblings().removeClass('active');
             $(this).addClass('active');
 
-            $.ajax({'url':'/getAttr/', 'data': {'func': func},
+            $.ajax({
+                'url':'/getAttr/', 
+                'data': {'func': func, 'username': '{{ username }}',},
                 'type': 'get', 
                 'success': function (res) {
                     var select = $('select.selectpicker');
@@ -48,111 +22,107 @@
                         select.append('<option value="' + res['attrs'][i] + 
                                     '">' + res['attrs'][i] + '</option>');
                     }
-                    showData(res);
+                    if (func == 'PlayList') 
+                        showData(res, 'queryTable', 1);
+                    else if (func == 'Song') 
+                        showData(res, 'queryTable', 2);
+                    else
+                        showData(res, 'queryTable');
             }});
         });
         $("#query").click(function() {
             var func = funcs[$('.func li.active').index() - 1],
                 attr = $('#attr').val(),
                 value = $('#value').val();
-            console.log(value);
-            $.ajax({'url':'/getAttr/', 'data': {'func': func, 'attr': attr, 'value': value},
+            // console.log(value);
+            $.ajax({'url':'/getAttr/', 'data': {
+                    'func': func, 
+                    'attr': attr, 
+                    'value': value,
+                    'username': '{{ username }}'
+                },
                 'type': 'get', 
                 'success': function (res) {
-                    showData(res);
+                    if (func == 'PlayList') 
+                        showData(res, 'queryTable', true);
+                    else if (func == 'Song') 
+                        showData(res, 'queryTable', false, true);
+                    else
+                        showData(res, 'queryTable');
             }});
         });
     });
     
 </script>
 <div class="container">
-        <div class="row">
-            <div class="span12">
-                <div class="page-header text-center">
-                    <h1>
-                        输入查询信息
-                    </h1>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="span3">
-                <ul class="nav nav-list func">
-                    <li class="nav-header">
-                        功能列表
-                    </li>
-                    <li>
-                        <a href="#">查询歌曲信息</a>
-                    </li>
-                    <li>
-                        <a href="#">查询歌手信息</a>
-                    </li>
-                    <li>
-                        <a href="#">查询专辑信息</a>
-                    </li>
-                    <li>
-                        <a href="#">查询唱片公司信息</a>
-                    </li>
-                    <li>
-                        <a href="#">查询收藏（播放）列表</a>
-                    </li>
-                    <li>
-                        <a href="#">查询用户信息</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="span9">
-                <div class="center-block">
-                    <div>
-                        <select class="selectpicker" id="attr">
-                        </select>
-                    </div>
-                    <div>
-                        <input class="input-medium search-query" id="value" name="value" type="text" required/>
-                        <button class="btn" id="query">查询</button> 
-                    </div>
-                </div>
-                
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>
-                                attr1
-                            </th>
-                            <th>
-                                attr2
-                            </th>
-                            <th>
-                                attr3
-                            </th>
-                            <th>
-                                attr4
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                            
-                        <tr class="info">
-                                <td>
-                                        value1
-                                    </td>
-                            
-                            
-                            <td>
-                                value2
-                            </td>
-                            <td>
-                                value3
-                            </td>
-                            <td>
-                                value4
-                            </td>
-                        </tr>
-                        
-                        
-                    </tbody>
-                </table>
+    <div class="row">
+        <div class="span12">
+            <div class="page-header text-center">
+                <h1>
+                    输入查询信息
+                </h1>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="span3">
+            <ul class="nav nav-list func">
+                <li class="nav-header">
+                    功能列表
+                </li>
+                <li>
+                    <a href="#">查询歌曲信息</a>
+                </li>
+                <li>
+                    <a href="#">查询歌手信息</a>
+                </li>
+                <li>
+                    <a href="#">查询专辑信息</a>
+                </li>
+                <li>
+                    <a href="#">查询唱片公司信息</a>
+                </li>
+                <li>
+                    <a href="#">查询收藏（播放）列表</a>
+                </li>
+                <li>
+                    <a href="#">查询用户信息</a>
+                </li>
+            </ul>
+        </div>
+        <div class="span9">
+            <div class="center-block">
+                <div>
+                    <select class="selectpicker" id="attr">
+                    </select>
+                </div>
+                <div>
+                    <input class="input-medium search-query" id="value" name="value" type="text" required/>
+                    <button class="btn" id="query">查询</button> 
+                </div>
+            </div>
+            
+            <table id="queryTable" class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <!-- <i class="fa fa-heart-o"></i> -->
+                            attr1
+                        </th>
+                        <th>
+                            attr2
+                        </th>
+                        <th>
+                            attr3
+                        </th>
+                        <th>
+                            attr4
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+            
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'base2.html' %} 
+{% block title %}列表信息{% endblock %} 
+{% block content %}
+<script>
+	$(function () {
+		$('#menu li.active').removeClass('active');
+		var data = JSON.parse('{{ playlist.songs }}'.replace(/&quot;/g, '"')),
+			attrs = JSON.parse('{{ playlist.attrs }}'.replace(/&quot;/g, '"').replace(/&#39;/g, '"'));
+		// console.log(attrs);
+		var showd = {
+			'result': data,
+			'attrs': attrs,
+			'table': 'Song',
+		};
+		if ('{{ playlist.build_user }}' == '{{ username }}')
+			showData(showd, 'song_list', 3);
+		else
+			showData(showd, 'song_list');
+		var select = $('select.selectpicker');
+		select.empty();
+		for (var i = 0; i < attrs.length; i++) {
+			select.append('<option value="' + attrs[i] + 
+						'">' + attrs[i] + '</option>');
+		}
+
+		$("#querySong").click(function() {
+            var func = 'Song',
+                attr = $('#attr').val(),
+                value = $('#value').val();
+            // console.log(value);
+            $.ajax({'url':'/getAttr/', 'data': {
+				'func': func, 
+				'attr': attr, 
+				'value': value,
+				'username': '{{ username }}',
+				'playlist': '{{ playlist.list_name }}',
+			},
+                'type': 'get', 
+                'success': function (res) {
+					// console.log('res: ' + res);
+					if ('{{ playlist.build_user }}' == '{{ username }}')
+						showData(res, 'song_list', 3);
+					else
+	                    showData(res, 'song_list');
+            }});
+        });
+	});
+    
+</script>
+<div class="container">
+	<div class="row">
+		<div class="span12">
+			<div class="page-header text-center">
+				<h1>
+					{{ playlist.list_name }}
+				</h1>
+			</div>
+			<div class="row">
+				<div class="span6">
+					<dl class="dl-horizontal">
+						<dt>
+							标签
+						</dt>
+						<dd>
+							{{ playlist.list_label }}
+						</dd>
+						<dt>
+							创建时间
+						</dt>
+						<dd>
+							{{ playlist.build_date }}
+						</dd>
+						<dt>
+							创建人
+						</dt>
+						<dd>
+							{{ playlist.build_user }}
+						</dd>
+						<dt>
+							歌曲数
+						</dt>
+						<dd>
+							{{ playlist.songs_counts }}
+						</dd>
+						<dt>
+							详细描述
+						</dt>
+						<dd>
+							{{ playlist.list_intro }}
+						</dd>
+					</dl>
+				</div>
+				<div class="span6">
+					<div>
+						<select class="selectpicker" id="attr">
+						</select>
+					</div>
+					<div>
+						<input class="input-medium search-query" id="value" name="value" type="text" required/>
+						<button class="btn" id="querySong">查询</button> 
+					</div>
+					
+				</div>
+			</div>
+			<table id="song_list" class="table">
+				<thead>
+					<tr>
+						<th>
+							attr1
+						</th>
+						<th>
+							attr2
+						</th>
+						<th>
+								attr3
+						</th>
+						<th>
+								attr4
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

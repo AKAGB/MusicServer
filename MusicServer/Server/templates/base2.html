@@ -7,10 +7,161 @@
     <title>{% block title %}查询页面{% endblock %}</title>
 
     <script src="https://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
-    <link href="https://cdn.bootcss.com/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+        function showData(res, tid, print_state=0) {
+            console.log(res);
+            var 
+                table = $('#' + tid),
+                thead = '<thead><tr><th></th>',
+                state = [
+                    '<i class="fa fa-hand-grab-o"></i>',
+                    '<a class="collect"><i class="fa fa-heart"></i></a>',
+                    '<a class="collect"><i class="fa fa-heart-o"></i></a>',
+                ],
+                add_code = '<div class="btn-group">' +
+                            '    <button data-toggle="dropdown" class="dropdown-toggle"  style="border:0px;background-color:transparent;"><i class="fa fa-plus-square-o"></i></button>' +
+                            '<ul class="dropdown-menu createlist">' +
+                            '    <li>' +
+                            '        <a href="#">操作</a>' +
+                            '    </li>' +
+                            '    <li>' +
+                            '        <a href="#">设置栏目</a>' +
+                            '    </li>' +
+                            '</ul>' +
+                            '</div>',
+                del_code = '<a class="del_song"><i class="fa fa-times"></i></a>';
 
+            if (print_state==1 || print_state==2) {
+                thead += '<th></th>'; 
+            }
+            table.empty();
+            for (var i = 0; i < res['attrs'].length; i++) {
+                thead += '<th>' + res['attrs'][i] + '</th>';
+            }
+            if (print_state==3) 
+                thead += '<th>Delete</th>';
+            
+                
+            thead += '</tr></thead>';
+            table.append(thead);
+
+            table.append('<tbody></tbody>');
+            tbody = table.find('tbody');
+            len = Math.min(10, res['result'].length);
+            for (var i = 0; i < len; i++) {
+                tr = '<tr class="info"><td>' + (i + 1) + '</td>';
+                if (print_state == 1) 
+                    // 添加额外的按钮
+                    tr += '<td>' + state[parseInt(res['result'][i]['state'])] + '</td>';
+                else if (print_state==2)
+                    tr += '<td>' + add_code + '</td>';
+                
+                for (var j = 0; j < res['attrs'].length; j++) {
+                    tr += '<td><a href="/index/{{ username }}/detail/' + 
+                            res['table'] + '/' + res['result'][i]['id'] + '/">' + 
+                            res['result'][i][res['attrs'][j]] + '</a></td>';
+                }
+                if (print_state==3)
+                    tr += '<td>' + del_code + '</td>';
+                tr += '</tr>';
+                tbody.append(tr);
+            }
+
+            
+            if (print_state==1) {
+                $('.collect').click(function () {
+                    var childi = $(this).find('i'),
+                        username = '{{ username }}',
+                        playlist = $(this).parent().siblings().eq(1).children().html(),
+                        action = 0;     // 0 表示删除，1表示添加收藏
+                    if (childi.hasClass('fa-heart')) {
+                        // 取消收藏
+                        childi.removeClass('fa-heart');
+                        childi.addClass('fa-heart-o');
+                        action = 0;
+                    }
+                    else {
+                        // 收藏列表
+                        childi.removeClass('fa-heart-o');
+                        childi.addClass('fa-heart');
+                        action = 1;
+                    }
+                    $.ajax({
+                        'url': '/alterPlayList/',
+                        'data': {
+                            username: username,
+                            playlist: playlist,
+                            action: action
+                        },
+                        'type': 'get',
+                        'success': function (res) {
+                            console.log(res);
+                        }
+                    })
+                });
+            }
+            else if (print_state==2) {
+                $.ajax({
+                    'url': '/getCreateList/',
+                    'data': {
+                        'username': '{{ username }}',
+                    },
+                    'type': 'get',
+                    'success': function (res) {
+                        // console.log(res);
+                        var cl = $('.createlist');
+                        cl.empty();
+                        for (var i = 0; i < res['result'].length; i++) {
+                            cl.append('<li><a class="add_to_list">' + res['result'][i] + '</a></li>')
+                        }
+                        $('.add_to_list').click(function () {
+                            var song_name = $(this).parent().parent().parent().parent().siblings().eq(1).children().html(),
+                                list_name = $(this).html(),
+                                action = 1;
+                            // console.log(song_name);
+                            $.ajax({
+                                'url': '/alterSong/',
+                                'data': {
+                                    'song_name': song_name,
+                                    'list_name': list_name,
+                                    'action': action,
+                                },
+                                'type': 'get',
+                                'sucess': function (res) {
+                                    console.log(res);
+                                } 
+                            })
+                        });
+                    }
+                });
+            }
+            else if (print_state==3) {
+                $('.del_song').click(function () {
+                    var list_name = '{{ playlist.list_name }}',
+                        song_name = $(this).parent().siblings().eq(1).children().html(),
+                        action = 0;
+                    console.log(list_name);
+                    console.log(song_name);
+                    $.ajax({
+                        'url': '/alterSong/',
+                        'data': {
+                            'song_name': song_name,
+                            'list_name': list_name,
+                            'action': action,
+                        },
+                        'type': 'get',
+                        'success': function (res) {
+                            window.location.reload();
+                        }
+                    })
+                })
+            }
+        };
+    </script>
 </head>
 <body>
     <div class="container">
@@ -25,8 +176,8 @@
                                     <li class="active">
                                         <a href="/index/{{ username }}/">查询</a>
                                     </li>
-                                    <li>
-                                        <a href="#">收藏</a>
+                                    <li id="List">
+                                        <a href="/index/{{ username }}/playlist/">收藏</a>
                                     </li>
                                 </ul>
                                 <ul class="nav pull-right">

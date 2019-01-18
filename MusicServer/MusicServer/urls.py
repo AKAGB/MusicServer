@@ -27,5 +27,9 @@ urlpatterns = [
     path('getAttr/', server_view.getAttr, name='getAttr'),
     path('index/<str:username>/userinfo/', server_view.userinfo, name='userinfo'),
     path('index/<str:username>/detail/<str:table>/<str:key>/', server_view.detail, name='detail'),
-    #path('index/<str:username>/<str:recordname>', server_view.record, name='record')
+    path('index/<str:username>/playlist/', server_view.playlist, name='playlist'),
+    path('index/<str:username>/playlist/createlist/', server_view.createlist, name='createlist'),
+    path('alterPlayList/', server_view.alterPlayList),
+    path('getCreateList/', server_view.getCreateList),
+    path('alterSong/', server_view.alterSong),
 ]
