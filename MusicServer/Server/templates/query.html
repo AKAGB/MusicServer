@@ -44,9 +44,9 @@
                 'type': 'get', 
                 'success': function (res) {
                     if (func == 'PlayList') 
-                        showData(res, 'queryTable', true);
+                        showData(res, 'queryTable', 1);
                     else if (func == 'Song') 
-                        showData(res, 'queryTable', false, true);
+                        showData(res, 'queryTable', 2);
                     else
                         showData(res, 'queryTable');
             }});
